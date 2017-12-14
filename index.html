@@ -1,0 +1,496 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
+<meta charset="utf-8">
+<title>ERC20 Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous" />
+<link rel="stylesheet" href="css/generator.css" />
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<form class="container" id="Form">
+    <div class="col-xs-4"></div>
+    <div class="col-xs-4 text-center">
+        <div class="h1">ERC20 Generator</div>
+        <div class="form-group"> 
+            <input type="text" id="companyName" class="form-control" placeholder="company name: eg. Google" required />
+        </div>
+        <div class="form-group"> 
+            <input type="email" id="userEmail" class="form-control" placeholder="email: eg. my@email.com" required />
+        </div>
+        <div class="form-group"> 
+            <input type="text" id="tokenName" class="form-control" placeholder="name: eg. Simon Bucks" required />
+        </div>
+        <div class="form-group"> 
+            <input type="text" id="tokenTicket" class="form-control" maxlength="3" placeholder="symbol: eg. SBX" required />
+        </div>
+        <div class="form-group"> 
+            <input type="number" id="decimalPlaces" class="form-control" placeholder="decimal places: eg. 4" required />
+        </div>
+        <div class="form-group"> 
+            <input type="number" id="initialSupply" class="form-control" placeholder="initial supply: eg. 10" required />
+        </div>
+        
+        <div class="h3">Features:</div>
+        <div class="text-left">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" id="isPausable" class="form-check-input" />
+                    Pausable 
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" id="isMintable" class="form-check-input option" />
+                    Mintable 
+                </label>
+                <ul style="list-style: none;">
+                    <li>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" id="isCapped" class="form-check-input subOption" />
+                                Capped
+                            </label>
+                            <input type="number" id="capAmount" class="form-control" placeholder="initial cap amount: eg. 10" hidden />
+                        </div>
+                        <ul>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" id="isCappingChangeable" class="form-check-input subSubOption" />
+                                    Increase/Decrease Cap amount
+                                </label>
+                            </div>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" id="isBurnable" class="form-check-input" />
+                    Burnable 
+                </label>
+                <ul style="list-style: none;">
+                        <li>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" id="isBurnableByEveryone" class="form-check-input subOption" />
+                                    Is Burnable by everyone
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" id="includeApproveAndCall" class="form-check-input" />
+                    Include Approve and Call 
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" id="includeTransferAndCall" class="form-check-input" />
+                    Include Transfer and Call 
+                </label>
+            </div>
+        </div>
+    
+        <button type="submit" id="render" class="btn btn-outline-dark">Create Token</button>
+        <br />
+        <br />
+        <div class="h4 title" hidden>ERC20 Contract</div>
+        <div class="col-xs-12 text-left">
+            <div class="col-xs-3"></div>
+            <div id="result" class="col-xs-6 result" style="overflow: hidden;"></div>
+            <div class="col-xs-3"></div>
+        </div>
+    </div>
+    <div class="col-xs-4"></div>
+<script type="text/x-tmpl" id="tmpl-demo">
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+    <div class="btn btn-outline-dark copy-to-clipboard">Copy</div>
+    <pre style="margin: 0; line-height: 125%">  
+    <span style="color: #888888">/** </span>
+    <span style="color: #888888"> * ERC-20 Standard Token Smart Contract implementation.</span>
+    <span style="color: #888888"> * </span>
+    <span style="color: #888888"> * Copyright © 2017 by {%=o.companyName%}</span>
+    <span style="color: #888888"> * </span>
+    <span style="color: #888888"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;).</span>
+    <span style="color: #888888"> * You may not use this file except in compliance with the License.</span>
+    <span style="color: #888888"> * </span>
+    <span style="color: #888888"> * Unless required by applicable law or agreed to in writing, software </span>
+    <span style="color: #888888"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+    <span style="color: #888888"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND (express or implied).</span>
+    <span style="color: #888888"> */</span> 
+    
+    pragma solidity <span style="color: #333333">^</span><span style="color: #6600EE; font-weight: bold">0.4</span>.<span style="color: #0000DD; font-weight: bold">16</span>;
+    {% if (o.includeApproveAndCall || o.includeTransferAndCall) { %} 
+    <span style="color: #6600EE; font-weight: bold">interface</span> TokenRecipient { {% if (o.includeApproveAndCall) { %}
+        <span style="color: #008800; font-weight: bold">function</span> receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool); {% } %}{% if (o.includeTransferAndCall) { %}
+        <span style="color: #008800; font-weight: bold">function</span> tokenFallback(address _from, uint256 _value, bytes _extraData) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool);{% } %}
+    }
+    {% } %}
+    <span style="color: #888888">/** </span>
+    <span style="color: #888888">* ERC-20 standard token interface</span>
+    <span style="color: #888888">*/</span> 
+    <span style="color: #6600EE; font-weight: bold">contract</span> ERC20Interface {
+        <span style="color: #888888">/** </span>
+    <span style="color: #888888">     * Get total number of tokens in circulation.</span>
+    <span style="color: #888888">     */</span>
+        uint256 <span style="color: #008800; font-weight: bold">public</span> totalSupply;
+        
+        <span style="color: #888888">/**</span>
+    <span style="color: #888888">     * @dev Get number of tokens currently belonging to given owner.</span>
+    <span style="color: #888888">     * </span>
+    <span style="color: #888888">     * @param _owner address to get number of tokens currently belonging to the owner of </span>
+    <span style="color: #888888">     * @return number of tokens currently belonging to the owner of given address </span>
+    <span style="color: #888888">     */</span> 
+        <span style="color: #008800; font-weight: bold">function</span> balanceOf (address _owner) <span style="color: #008800; font-weight: bold">constant</span> <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (uint256 balance); 
+    
+        <span style="color: #888888">/**</span>
+    <span style="color: #888888">     * @dev Transfer given number of tokens from message sender to given recipient.</span>
+    <span style="color: #888888">     * </span>
+    <span style="color: #888888">     * @param _to address to transfer tokens to the owner of</span>
+    <span style="color: #888888">     * @param _value number of tokens to transfer to the owner of given address</span>
+    <span style="color: #888888">     * @return true if tokens were transferred successfully, false otherwise</span>
+    <span style="color: #888888">     */</span>
+        <span style="color: #008800; font-weight: bold">function</span> transfer (address _to, uint256 _value) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success);
+        
+        <span style="color: #888888">/**</span>
+    <span style="color: #888888">     * @dev Transfer given number of tokens from given owner to given recipient.  </span>
+    <span style="color: #888888">     *  </span>
+    <span style="color: #888888">     * @param _from address to transfer tokens from the owner of  </span>
+    <span style="color: #888888">     * @param _to address to transfer tokens to the owner of  </span>
+    <span style="color: #888888">     * @param _value number of tokens to transfer from given owner to given recipient  </span>
+    <span style="color: #888888">     * @return true if tokens were transferred successfully, false otherwise  </span>
+    <span style="color: #888888">     */</span>  
+        <span style="color: #008800; font-weight: bold">function</span> transferFrom (address _from, address _to, uint256 _value) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success);  
+        
+        <span style="color: #888888">/**  </span>
+    <span style="color: #888888">     * @dev Allow given spender to transfer given number of tokens from message sender.  </span>
+    <span style="color: #888888">     *  </span>
+    <span style="color: #888888">     * @param _spender address to allow the owner of to transfer tokens from message sender  </span>
+    <span style="color: #888888">     * @param _value number of tokens to allow to transfer  </span>
+    <span style="color: #888888">     * @return true if token transfer was successfully approved, false otherwise  </span>
+    <span style="color: #888888">     */</span>  
+        <span style="color: #008800; font-weight: bold">function</span> approve (address _spender, uint256 _value) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success);  
+        
+        <span style="color: #888888">/**  </span>
+    <span style="color: #888888">     * @dev Tell how many tokens given spender is currently allowed to transfer from  </span>
+    <span style="color: #888888">     * given owner.  </span>
+    <span style="color: #888888">     *  </span>
+    <span style="color: #888888">     * @param _owner address to get number of tokens allowed to be transferred from the owner of  </span>
+    <span style="color: #888888">     * @param _spender address to get number of tokens allowed to be transferred by the owner of  </span>
+    <span style="color: #888888">     * @return number of tokens given spender is currently allowed to transfer from given owner  </span>
+    <span style="color: #888888">     */</span>  
+        <span style="color: #008800; font-weight: bold">function</span> allowance (address _owner, address _spender) <span style="color: #008800; font-weight: bold">constant</span> <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (uint256 remaining);  
+        
+        <span style="color: #888888">/**  </span>
+    <span style="color: #888888">     * @dev Logged when tokens were transferred from one owner to another.  </span>
+    <span style="color: #888888">     *  </span>
+    <span style="color: #888888">     * @param _from address of the owner, tokens were transferred from  </span>
+    <span style="color: #888888">     * @param _to address of the owner, tokens were transferred to  </span>
+    <span style="color: #888888">     * @param _value number of tokens transferred  </span>
+    <span style="color: #888888">     */</span>  
+        <span style="color: #6600EE; font-weight: bold">event</span> Transfer (address indexed _from, address indexed _to, uint256 _value);  
+        
+        <span style="color: #888888">/**  </span>
+    <span style="color: #888888">     * @dev Logged when owner approved his tokens to be transferred by some spender.  </span>
+    <span style="color: #888888">     *  </span>
+    <span style="color: #888888">     * @param _owner owner who approved his tokens to be transferred  </span>
+    <span style="color: #888888">     * @param _spender spender who were allowed to transfer the tokens belonging to the owner  </span>
+    <span style="color: #888888">     * @param _value number of tokens belonging to the owner, approved to be transferred by the spender  </span>
+    <span style="color: #888888">     */</span>  
+        <span style="color: #6600EE; font-weight: bold">event</span> Approval (address indexed _owner, address indexed _spender, uint256 _value);  
+    }  
+        
+    <span style="color: #6600EE; font-weight: bold">contract</span> Ownable {  
+        address <span style="color: #008800; font-weight: bold">public</span> owner;  
+        address <span style="color: #008800; font-weight: bold">public</span> newOwner;  
+            
+        <span style="color: #008800; font-weight: bold">function</span> Ownable() <span style="color: #008800; font-weight: bold">public</span> {  
+            owner <span style="color: #333333">=</span> msg.sender;  
+        }  
+            
+        <span style="color: #6600EE; font-weight: bold">modifier</span> onlyOwner {  
+            assert(msg.sender <span style="color: #333333">==</span> owner);  
+            _;  
+        }  
+    
+        <span style="color: #6600EE; font-weight: bold">modifier</span> onlyNewOwner {  
+            assert(msg.sender <span style="color: #333333">==</span> owner);  
+            _;  
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* @dev Transfers ownership. New owner has to accept in order ownership change to take effect  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> transferOwnership(address _newOwner) <span style="color: #008800; font-weight: bold">public</span> onlyOwner {  
+            require(_newOwner <span style="color: #333333">!=</span> owner);  
+            newOwner <span style="color: #333333">=</span> _newOwner;  
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* @dev Accepts transferred ownership  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> acceptOwnership() <span style="color: #008800; font-weight: bold">public</span> onlyNewOwner {  
+            OwnerUpdate(owner, newOwner);  
+            owner <span style="color: #333333">=</span> newOwner;  
+            newOwner <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x0</span>;  
+        }  
+            
+        <span style="color: #6600EE; font-weight: bold">event</span> OwnerUpdate(address _prevOwner, address _newOwner);  
+    }  
+    {% if (o.isPausable) { %}
+    <span style="color: #888888">/**</span>
+    <span style="color: #888888">* Pause/Unpanuse protection Smart Contract implementation.</span>
+    <span style="color: #888888">*/</span>
+    <span style="color: #6600EE; font-weight: bold">contract</span> Pausable is Ownable {
+        <span style="color: #6600EE; font-weight: bold">event</span> Pause();
+        <span style="color: #6600EE; font-weight: bold">event</span> Unpause();
+    
+        bool <span style="color: #008800; font-weight: bold">public</span> paused <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">false</span>;
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Modifier to make a function callable only when the contract is not paused.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #6600EE; font-weight: bold">modifier</span> whenNotPaused() {
+            require(<span style="color: #333333">!</span>paused);
+            _;
+        }
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Modifier to make a function callable only when the contract is paused.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #6600EE; font-weight: bold">modifier</span> whenPaused() {
+            require(paused);
+            _;
+        }
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev called by the owner to pause, triggers stopped state</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> pause() onlyOwner whenNotPaused <span style="color: #008800; font-weight: bold">public</span> {
+            paused <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">true</span>;
+            Pause();
+        }
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev called by the owner to unpause, returns to normal state</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> unpause() onlyOwner whenPaused <span style="color: #008800; font-weight: bold">public</span> {
+            paused <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">false</span>;
+            Unpause();
+        }
+    }
+    {% } %}
+    <span style="color: #888888">/**  </span>
+    <span style="color: #888888">* Standard Token Smart Contract that implements ERC-20 token interface  </span>
+    <span style="color: #888888">*/</span>  
+    <span style="color: #6600EE; font-weight: bold">contract</span> {%=o.tokenTicket%}Token is ERC20Interface, Ownable{% if (o.isPausable) { %}, Pausable{% } %} {  
+        <span style="color: #888888">// Public variables of the token  </span>
+        bytes32 <span style="color: #008800; font-weight: bold">public</span> name <span style="color: #333333">=</span> "{%=o.tokenName%}";  
+        bytes3 <span style="color: #008800; font-weight: bold">public</span> symbol <span style="color: #333333">=</span> "{%=o.tokenTicket%}";
+        uint8 <span style="color: #008800; font-weight: bold">public</span> decimals <span style="color: #333333">=</span> {%=o.decimalPlaces%};
+        <span style="color: #888888">// 18 decimals is the strongly suggested default, avoid changing it  </span>
+        
+        uint256 <span style="color: #008800; font-weight: bold">public</span> totalSupply; 
+        {% if (o.isMintable) { %}
+        bool <span style="color: #008800; font-weight: bold">public</span> mintingFinished <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">false</span>;
+        {% if (o.isCapped) { %}uint256 <span style="color: #008800; font-weight: bold">public</span> capAmount;
+        {% } %}{% } %}
+        <span style="color: #888888">// This creates an array with all balances  </span>
+        mapping (address <span style="color: #333333">=&gt;</span> uint256) <span style="color: #008800; font-weight: bold">public</span> balances;  
+        mapping (address <span style="color: #333333">=&gt;</span> mapping (address <span style="color: #333333">=&gt;</span> uint256)) <span style="color: #008800; font-weight: bold">public</span> allowed;  
+            
+        <span style="color: #888888">// Events</span>
+        <span style="color: #888888">// This generates a public event on the blockchain that will notify clients  </span>
+        <span style="color: #6600EE; font-weight: bold">event</span> Transfer(address indexed from, address indexed to, uint256 value);  
+        <span style="color: #6600EE; font-weight: bold">event</span> ClaimTransfer(address indexed from, uint256 value);  
+        {% if (o.isMintable) { %}
+        <span style="color: #6600EE; font-weight: bold">event</span> Mint(address indexed to, uint256 amount);
+        <span style="color: #6600EE; font-weight: bold">event</span> MintFinished();
+
+        <span style="color: #6600EE; font-weight: bold">modifier</span> canMint() {
+            require(<span style="color: #333333">!</span>mintingFinished);
+            _;
+        }{% if (o.isCapped) { %}
+        
+        <span style="color: #6600EE; font-weight: bold">event</span> CapAmountIncreased(uint256 amount);
+        <span style="color: #6600EE; font-weight: bold">event</span> CapAmountDecreased(uint256 amount);{% } %}
+        {% } %}
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Protection against short address attack  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #6600EE; font-weight: bold">modifier</span> onlyPayloadSize(uint numwords) {  
+            assert(msg.data.length <span style="color: #333333">==</span> numwords <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">32</span> <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">4</span>);  
+            _;  
+        }
+        
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Constructor function  </span>
+        <span style="color: #888888">*  </span>
+        <span style="color: #888888">* Initializes contract with initial supply tokens to the creator of the contract  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> {%=o.tokenTicket%}Token() <span style="color: #008800; font-weight: bold">public</span> {  
+            totalSupply <span style="color: #333333">=</span> {%=o.initialSupply%} <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">10</span> <span style="color: #333333">**</span> uint256(decimals);  <span style="color: #888888">// Update total supply with the decimal amount  </span>{% if (o.isCapped) { %}
+            capAmount <span style="color: #333333">=</span> {%=o.capAmount%};{% } %}
+            balances[msg.sender] <span style="color: #333333">=</span> totalSupply;                    <span style="color: #888888">// Give the creator all initial tokens  </span>
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Transfer sender&#39;s tokens to a given address  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> transfer(address _to, uint256 _value) {% if (o.isPausable) { %} whenNotPaused {% } %} onlyPayloadSize(<span style="color: #0000DD; font-weight: bold">2</span>) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success) {
+            require(_to <span style="color: #333333">!=</span> <span style="color: #005588; font-weight: bold">0x0</span>);  
+                
+            balances[msg.sender] <span style="color: #333333">=</span> balances[msg.sender] - _value;
+            balances[_to] <span style="color: #333333">+=</span> _value;  
+            Transfer(msg.sender, _to, _value);  
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;  
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Transfer _from&#39;s tokens to _to&#39;s address  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> transferFrom(address _from, address _to, uint256 _value) {% if (o.isPausable) { %}whenNotPaused {% } %}onlyPayloadSize(<span style="color: #0000DD; font-weight: bold">3</span>) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success) {
+            require(_to <span style="color: #333333">!=</span> <span style="color: #005588; font-weight: bold">0x0</span>);  
+            require(balances[_from] <span style="color: #333333">&gt;=</span> _value <span style="color: #333333">&amp;&amp;</span> allowed[_from][msg.sender] <span style="color: #333333">&gt;=</span> _value);  
+                
+            balances[_from] <span style="color: #333333">=</span> balances[_from] - _value;  
+            balances[_to] <span style="color: #333333">+=</span> _value;  
+            allowed[_from][msg.sender] <span style="color: #333333">=</span> allowed[_from][msg.sender] - _value; 
+            Transfer(_from, _to, _value);  
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;  
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Returns number of tokens owned by given address.  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> balanceOf(address _owner) <span style="color: #008800; font-weight: bold">constant</span> <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (uint256 balance) {  
+            <span style="color: #008800; font-weight: bold">return</span> balances[_owner];  
+        }  
+            
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Sets approved amount of tokens for spender.  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> approve(address _spender, uint256 _value) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success) {  
+            require(_value <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #333333">||</span> allowed[msg.sender][_spender] <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>);  
+            allowed[msg.sender][_spender] <span style="color: #333333">=</span> _value;  
+            Approval(msg.sender, _spender, _value);  
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;  
+        }            
+        {% if (o.includeApproveAndCall) { %}
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Approve and then communicate the approved contract in a single transaction  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> approveAndCall(address _spender, uint256 _value, bytes _extraData) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success) {  
+            TokenRecipient spender <span style="color: #333333">=</span> TokenRecipient(_spender);  
+            <span style="color: #008800; font-weight: bold">if</span> (approve(_spender, _value)) {  
+                spender.receiveApproval(msg.sender, _value, <span style="color: #008800; font-weight: bold">this</span>, _extraData);  
+                <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;  
+            }  
+        }  
+        {% } %}{% if (o.includeTransferAndCall) { %}
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Transfer and then communicate the contract in a single transaction  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> transferAndCall(address _recipient, uint256 _value, bytes _extraData) <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool success) {  
+            TokenRecipient recipient <span style="color: #333333">=</span> TokenRecipient(_recipient);  
+            <span style="color: #008800; font-weight: bold">if</span> (transfer(_recipient, _value)) {  
+                recipient.tokenFallback(msg.sender, _value, _extraData);  
+                <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;  
+            }  
+        }  
+        {% } %}
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888">* Returns number of allowed tokens for given address.  </span>
+        <span style="color: #888888">*/</span>  
+        <span style="color: #008800; font-weight: bold">function</span> allowance(address _owner, address _spender) onlyPayloadSize(<span style="color: #0000DD; font-weight: bold">2</span>) <span style="color: #008800; font-weight: bold">constant</span> <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (uint256 remaining) {  
+            <span style="color: #008800; font-weight: bold">return</span> allowed[_owner][_spender];  
+        }{% if (o.isMintable) { %}
+
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Function to mint tokens</span>
+        <span style="color: #888888">* @param _to The address that will receive the minted tokens.</span>
+        <span style="color: #888888">* @param _amount The amount of tokens to mint.</span>
+        <span style="color: #888888">* @return A boolean that indicates if the operation was successful.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> mint(address _to, uint256 _amount) onlyOwner canMint <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool) {
+            uint256 newTotalSupply <span style="color: #333333">=</span> totalSupply + _amount;
+            {% if (o.isCapped) { %}require(newTotalSupply <span style="color: #333333">&lt;=</span> capAmount);
+            {% } %}totalSupply <span style="color: #333333">=</span> newTotalSupply;
+            balances[_to] <span style="color: #333333">=</span> balances[_to] + _amount;
+            Mint(_to, _amount);
+            Transfer(address(<span style="color: #0000DD; font-weight: bold">0</span>), _to, _amount);
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;
+        }
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Function to stop minting new tokens.</span>
+        <span style="color: #888888">* @return True if the operation was successful.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> finishMinting() onlyOwner canMint <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool) {
+            mintingFinished <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">true</span>;
+            MintFinished();
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;
+        }{% if (o.isCappingChangeable) { %}
+        
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Function to increase tokens cap limit</span>
+        <span style="color: #888888">* @param _amount The amount of tokens to increase cap</span>
+        <span style="color: #888888">* @return A boolean that indicates if the operation was successful.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> increaseCapAmount(uint256 _amount) onlyOwner <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool) {
+            capAmount <span style="color: #333333">=</span> capAmount + _amount;
+            CapAmountIncreased(_amount);
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;
+        }
+    
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888">* @dev Function to decrease tokens cap limit</span>
+        <span style="color: #888888">* @param _amount The amount of tokens to decrease cap</span>
+        <span style="color: #888888">* @return A boolean that indicates if the operation was successful.</span>
+        <span style="color: #888888">*/</span>
+        <span style="color: #008800; font-weight: bold">function</span> decreaseCapAmount(uint256 _amount) onlyOwner <span style="color: #008800; font-weight: bold">public</span> <span style="color: #008800; font-weight: bold">returns</span> (bool) {
+            capAmount <span style="color: #333333">=</span> capAmount - _amount;
+            CapAmountDecreased(_amount);
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #008800; font-weight: bold">true</span>;
+        }   {% } %}{% } %} {% if (o.isBurnable) { %} 
+        <span style="color: #6600EE; font-weight: bold">event</span> Burn(address indexed burner, uint256 value);
+        
+        <span style="color: #888888">/**</span>
+        <span style="color: #888888"> * @dev Burns a specific amount of tokens.</span>
+        <span style="color: #888888"> * @param _value The amount of token to be burned.</span>
+        <span style="color: #888888"> */</span>
+        <span style="color: #008800; font-weight: bold">function</span> burn(uint256 _value) {% if (!o.isBurnableByEveryone) { %}onlyOwner {% } %}<span style="color: #008800; font-weight: bold">public</span> {
+            require(_value <span style="color: #333333">&lt;=</span> balances[msg.sender]);
+            <span style="color: #888888">// no need to require value &lt;= totalSupply, since that would imply the</span>
+            <span style="color: #888888">// sender&#39;s balance is greater than the totalSupply, which *should* be an assertion failure</span>
+        
+            address burner <span style="color: #333333">=</span> msg.sender;
+            balances[burner] <span style="color: #333333">=</span> balances[burner] - _value;
+            totalSupply <span style="color: #333333">=</span> totalSupply - _value;
+            Burn(burner, _value);
+        }{% } %}
+    }  
+    </pre>
+</div>
+        
+</script>
+<script type="text/x-tmpl" id="tmpl-error">
+<h3 class="error">{%=o.title%}</h3>
+<code>{%=o.error%}</code>
+</script>
+<script src="js/tmpl.js"></script>
+<script src="js/generator.js"></script>
+</form>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.container {
+  width: 1024px;
+}
+
+#result {
+  position: relative;
+}
+
+.copy-to-clipboard {
+  position: absolute;
+  float: right;
+  top: 10px;
+  right: 10px;
+}
