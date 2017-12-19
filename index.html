@@ -20,88 +20,82 @@
     <div class="col-xs-4"></div>
     <div class="col-xs-4 text-center">
         <div class="h1">ERC20 Generator</div>
-        <div class="form-group"> 
-            <input type="text" id="companyName" class="form-control" placeholder="company name: eg. Google" required />
+        <div class=" form-group col-md-12"> 
+            <input type="text" id="companyName" class="form-control col-xs-12 col-md-5 float-left" style="margin: 10px 10px 0 10px;" placeholder="company name: eg. MyCompany" required />
+            <input type="email" id="userEmail" class="form-control col-xs-12 col-md-5 float-left" style="margin: 10px 10px 0 10px;" placeholder="email: eg. my@email.com" required />
         </div>
-        <div class="form-group"> 
-            <input type="email" id="userEmail" class="form-control" placeholder="email: eg. my@email.com" required />
+        <div class="form-group col-md-12"> 
+            <input type="text" id="tokenName" class="form-control col-xs-12 col-md-7 float-left" style="margin: 10px 10px 0 10px;" placeholder="name: eg. Simon Bucks" required />
+            <input type="text" id="tokenTicket" class="form-control col-xs-12 col-md-3 float-left" style="margin: 10px 10px 0 10px;" maxlength="15" placeholder="symbol: eg. SBX" required />
         </div>
-        <div class="form-group"> 
-            <input type="text" id="tokenName" class="form-control" placeholder="name: eg. Simon Bucks" required />
+        <div class="form-group col-md-12"> 
+            <input type="number" id="decimalPlaces" class="form-control col-xs-12 col-md-5 float-left" style="margin: 10px 10px 0 10px;" placeholder="decimal places: eg. 18" required />
+            <input type="number" id="initialSupply" class="form-control col-xs-12 col-md-5 float-left" style="margin: 10px 10px 0 10px;" placeholder="initial supply: eg. 100000000" required />
         </div>
-        <div class="form-group"> 
-            <input type="text" id="tokenTicket" class="form-control" maxlength="3" placeholder="symbol: eg. SBX" required />
-        </div>
-        <div class="form-group"> 
-            <input type="number" id="decimalPlaces" class="form-control" placeholder="decimal places: eg. 4" required />
-        </div>
-        <div class="form-group"> 
-            <input type="number" id="initialSupply" class="form-control" placeholder="initial supply: eg. 10" required />
-        </div>
-        
-        <div class="h3">Features:</div>
-        <div class="text-left">
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="checkbox" id="isPausable" class="form-check-input" />
-                    Pausable 
-                </label>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="checkbox" id="isMintable" class="form-check-input option" />
-                    Mintable 
-                </label>
-                <ul style="list-style: none;">
-                    <li>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" id="isCapped" class="form-check-input subOption" />
-                                Capped
-                            </label>
-                            <input type="number" id="capAmount" class="form-control" placeholder="initial cap amount: eg. 10" hidden />
-                        </div>
-                        <ul>
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input type="checkbox" id="isCappingChangeable" class="form-check-input subSubOption" />
-                                    Increase/Decrease Cap amount
-                                </label>
-                            </div>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="checkbox" id="isBurnable" class="form-check-input" />
-                    Burnable 
-                </label>
-                <ul style="list-style: none;">
+        <div class="row col-md-12" style="margin-left: 15px;">
+            <div class="h3 col-md-12" style="margin-top: 25px">Features:</div>
+            <div class="text-left">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="isPausable" class="form-check-input" />
+                        Pausable - Provides possibility to pause/unpause token transfers.
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="isMintable" class="form-check-input option" />
+                        Mintable - Provides possibility to mint (create) new tokens when needed. Can be used to create and sell new tokens during ICOs, and minting can be stopped when required.
+                    </label>
+                    <ul style="list-style: none;">
                         <li>
                             <div class="form-check">
                                 <label class="form-check-label">
-                                    <input type="checkbox" id="isBurnableByEveryone" class="form-check-input subOption" />
-                                    Is Burnable by everyone
+                                    <input type="checkbox" id="isCapped" class="form-check-input subOption" />
+                                    Capped - Provides token limit for minting.
                                 </label>
+                                <input type="number" id="capAmount" class="form-control" placeholder="initial cap amount: eg. 10" hidden />
                             </div>
+                            <ul>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" id="isCappingChangeable" class="form-check-input subSubOption" />
+                                        Increase/Decrease Cap amount - Makes token minting limit adjustable to the needs.
+                                    </label>
+                                </div>
+                            </ul>
                         </li>
                     </ul>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="checkbox" id="includeApproveAndCall" class="form-check-input" />
-                    Include Approve and Call 
-                </label>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="checkbox" id="includeTransferAndCall" class="form-check-input" />
-                    Include Transfer and Call 
-                </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="isBurnable" class="form-check-input" />
+                        Burnable - Provides possibility to destroy unwanted/unnecessary tokens.
+                    </label>
+                    <ul style="list-style: none;">
+                            <li>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" id="isBurnableByEveryone" class="form-check-input subOption" />
+                                        Is Burnable by everyone - Should everyone be able to destroy tokens, or only the token owner.
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="includeApproveAndCall" class="form-check-input" checked />
+                        Include Approve and Call - Provides flexibility for other contracts to work with the token. Approve and then communicate the approved contract in a single transaction.
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="includeTransferAndCall" class="form-check-input" checked />
+                        Include Transfer and Call - Provides flexibility for other contracts to work with the token. Transfer and then communicate the contract in a single transaction.
+                    </label>
+                </div>
             </div>
         </div>
-    
         <button type="submit" id="render" class="btn btn-outline-dark">Create Token</button>
         <br />
         <br />
@@ -480,6 +474,23 @@
             totalSupply <span style="color: #333333">=</span> totalSupply - _value;
             Burn(burner, _value);
         }{% } %}
+        <span style="color: #888888">/**  </span>
+        <span style="color: #888888"> * @dev Dennis Peterson&#39;s Law Protection  </span>
+        <span style="color: #888888"> * Claim tokens  </span>
+        <span style="color: #888888"> */</span>  
+        <span style="color: #008800; font-weight: bold">function</span> claimTokens(address _token) <span style="color: #008800; font-weight: bold">public</span> onlyOwner {  
+            <span style="color: #008800; font-weight: bold">if</span> (_token <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">0x0</span>) {  
+                owner.transfer(<span style="color: #008800; font-weight: bold">this</span>.balance);  
+                ClaimTransfer(owner, this.balance);  
+                <span style="color: #008800; font-weight: bold">return</span>;  
+            }  
+                    
+            {%=o.tokenTicket%}Token token <span style="color: #333333">=</span> {%=o.tokenTicket%}Token(<span style="color: #008800; font-weight: bold">this</span>);
+            uint balance <span style="color: #333333">=</span> token.balanceOf(<span style="color: #008800; font-weight: bold">this</span>);
+            token.transfer(owner, balance);  
+                    
+            ClaimTransfer(owner, balance);  
+        } 
     }  
     </pre>
 </div>

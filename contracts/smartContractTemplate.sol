@@ -397,4 +397,21 @@ contract {%=o.tokenTicket%}Token is ERC20Interface, Ownable{% if (o.isPausable) 
         Burn(burner, _value);
     }
     {% } %}
+    /**
+     * Peterson's Law Protection
+     * Claim tokens
+     */
+    function claimTokens(address _token) public ownerOnly {
+        if (_token == 0x0) {
+            owner.transfer(this.balance);
+            ClaimTransfer(owner, this.balance);
+            return;
+        }
+
+        HVNToken token = HVNToken(this);
+        uint balance = token.balanceOf(this);
+        token.transfer(owner, balance);
+
+        ClaimTransfer(owner, balance);
+    }
 }  
